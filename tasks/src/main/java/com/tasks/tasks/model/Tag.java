@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a User in the system.
- * Stores information about the user; i.e name, id, password, tasks and tags.
+ * Represents a tag in the system.
+ * Stores information about the tags
  */
 
 @Getter
@@ -30,4 +30,5 @@ public class Tag {
 
     @ManyToMany(mappedBy = "tags")
     private Set<Task> tasks = new HashSet<>();
+
 }

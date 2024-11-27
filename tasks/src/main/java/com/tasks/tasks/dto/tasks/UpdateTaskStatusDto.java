@@ -1,0 +1,15 @@
+package com.tasks.tasks.dto.tasks;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.util.List;
+
+/**
+ * DTO for creating a task
+ */
+@Data
+public class UpdateTaskStatusDto {
+    @NotBlank
+    private Boolean isCompleted ;
+}

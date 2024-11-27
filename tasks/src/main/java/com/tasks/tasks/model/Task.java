@@ -5,13 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a User in the system.
- * Stores information about the user; i.e name, id, password, tasks and tags.
+ * Represents a task in the system.
+ * Stores information about tasks
  */
 
 @Getter
@@ -43,4 +46,13 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags  = new HashSet<>();
+
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
 }

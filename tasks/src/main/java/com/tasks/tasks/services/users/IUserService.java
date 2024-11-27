@@ -1,7 +1,7 @@
 package com.tasks.tasks.services.users;
 
-import com.tasks.tasks.dto.users.FindUserProfileDto;
-import com.tasks.tasks.dto.users.UpdateUserProfileDto;
+import com.tasks.tasks.dto.users.FindUserDto;
+import com.tasks.tasks.dto.users.UpdateUserDto;
 
 public interface IUserService {
 
@@ -9,13 +9,13 @@ public interface IUserService {
      * Fetches the profile details of a single user by username.
      *
      * This method retrieves the profile details of a user based on their username. It returns
-     * a {@link FindUserProfileDto} that represents the user's profile data.
+     * a {@link FindUserDto} that represents the user's profile data.
      *
      * @param username the username of the user whose profile is to be fetched
-     * @return {@link FindUserProfileDto} containing the user's profile information
+     * @return {@link FindUserDto} containing the user's profile information
      * @throws UserNotFoundException if the user is not found
      */
-    FindUserProfileDto findUserProfile(String username);
+    FindUserDto findUser(String username);
 
     /**
      * Updates the details of a user.
@@ -24,14 +24,14 @@ public interface IUserService {
      * the updated user information and applies the changes to the database.
      *
      * @param username the username of the user to update
-     * @param updateUserProfileDto DTO containing the updated user data
+     * @param updateUserDto DTO containing the updated user data
      * @return a success message indicating that the user's profile has been updated
      * @throws UserNotFoundException if the user is not found
      * @throws InvalidDataException if the provided data is invalid
      */
-    String updateUserProfile(
+    String updateUser(
             String username,
-            UpdateUserProfileDto updateUserProfileDto
+            UpdateUserDto updateUserDto
     );
 
     /**
