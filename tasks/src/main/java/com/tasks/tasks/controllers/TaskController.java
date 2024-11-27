@@ -2,9 +2,7 @@ package com.tasks.tasks.controllers;
 
 
 import com.tasks.tasks.auth.model.UserPrincipal;
-import com.tasks.tasks.dto.tags.FindTagResDto;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
-import com.tasks.tasks.dto.tasks.FindTaskResDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.services.tasks.TaskService;
@@ -47,7 +45,7 @@ public class TaskController  {
                         taskService.findTasks(page, pageSize ,userPrincipal.getId())));
     }
 
-    @PatchMapping("/{taskId}")
+    @PatchMapping("/status/{taskId}")
     public ResponseEntity<ApiResponse<List<Task>>> updateTaskStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestBody() UpdateTaskStatusDto updateTaskStatusDto,
@@ -55,7 +53,8 @@ public class TaskController  {
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>(
-                        taskService.updateTaskStatus(updateTaskStatusDto,taskId ,userPrincipal.getId()), null));    }
+                        taskService.updateTaskStatus(updateTaskStatusDto,taskId ,userPrincipal.getId()), null));
+    }
 
     @PatchMapping("/{taskId}")
     public ResponseEntity<ApiResponse<String>> updateTask(

@@ -1,16 +1,13 @@
 package com.tasks.tasks.services.tasks;
 
 import com.tasks.tasks.auth.repo.AuthRepository;
-import com.tasks.tasks.dto.tags.FindTagResDto;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
-import com.tasks.tasks.dto.tasks.FindTaskResDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.exceptions.ResourceNotFoundException;
 import com.tasks.tasks.exceptions.UnauthorizedException;
 import com.tasks.tasks.model.Tag;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.model.User;
-import com.tasks.tasks.repository.TagRepository;
 import com.tasks.tasks.repository.TaskRepository;
 import com.tasks.tasks.repository.UserRepository;
 import com.tasks.tasks.services.tags.TagService;

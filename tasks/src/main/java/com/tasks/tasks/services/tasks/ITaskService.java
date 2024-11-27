@@ -1,6 +1,5 @@
 package com.tasks.tasks.services.tasks;
 
-import com.tasks.tasks.dto.tags.FindTagResDto;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.model.Task;

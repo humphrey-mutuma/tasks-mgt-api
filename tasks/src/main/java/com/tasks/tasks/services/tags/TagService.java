@@ -1,16 +1,13 @@
 package com.tasks.tasks.services.tags;
 
-import com.tasks.tasks.auth.repo.AuthRepository;
- import com.tasks.tasks.dto.tags.FindTagResDto;
-import com.tasks.tasks.dto.tags.FindTagsWithTasksResDto;
+ import com.tasks.tasks.dto.tags.FindTagsWithTasksCountResDto;
+import com.tasks.tasks.dto.tags.FindTagWithTasksResDto;
 import com.tasks.tasks.model.Tag;
 import com.tasks.tasks.repository.TagRepository;
-import com.tasks.tasks.repository.UserRepository;
- import lombok.RequiredArgsConstructor;
+  import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,11 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TagService implements ITagService {
-    private final AuthRepository authRepository;
-    private final UserRepository userRepository;
     private final TagRepository tagRepository;
-
-
 
     @Transactional
     @Override
@@ -61,19 +54,14 @@ public class TagService implements ITagService {
         return allTags;
     }
 
-
     @Override
-    public List<FindTagResDto> findTags(int page, int pageSize) {
+    public List<FindTagsWithTasksCountResDto> findTagsWithTasksCount(int page, int pageSize) {
         return List.of();
     }
 
     @Override
-    public List<FindTagsWithTasksResDto> findTagsWithTasks(int page, int pageSize) {
+    public List<FindTagWithTasksResDto> findTagWithTasks(Long tagId, int page, int pageSize) {
         return List.of();
     }
 
-    @Override
-    public String deleteTag(Long tagId) {
-        return "";
-    }
 }
