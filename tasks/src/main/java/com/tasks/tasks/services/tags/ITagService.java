@@ -1,19 +1,17 @@
 package com.tasks.tasks.services.tags;
 
-import com.tasks.tasks.dto.tags.CreateTagDto;
-import com.tasks.tasks.dto.tags.FindTagsResDto;
+ import com.tasks.tasks.dto.tags.FindTagResDto;
 import com.tasks.tasks.dto.tags.FindTagsWithTasksResDto;
-import com.tasks.tasks.dto.users.FindUserDto;
-import com.tasks.tasks.dto.users.UpdateUserDto;
+ import com.tasks.tasks.model.Tag;
 
-import java.util.List;
+ import java.util.List;
+ import java.util.Set;
 
 public interface ITagService {
 
+    Set<Tag> findOrCreateTags(List<String> tagnames);
 
-    String createTag(CreateTagDto createTagDto);
-
-    List<FindTagsResDto> findTags(int page, int pageSize    );
+    List<FindTagResDto> findTags(int page, int pageSize    );
 
     List<FindTagsWithTasksResDto> findTagsWithTasks(int page, int pageSize  );
 

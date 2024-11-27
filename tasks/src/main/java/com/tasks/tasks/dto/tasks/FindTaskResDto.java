@@ -4,7 +4,7 @@ package com.tasks.tasks.dto.tasks;
  * DTO for creating a task
  */
 
-public interface FindTasksResDto {
+public interface FindTaskResDto {
     String getId();
     String getTitle();
     String getDescription();

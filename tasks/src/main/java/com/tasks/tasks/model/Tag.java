@@ -31,4 +31,6 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private Set<Task> tasks = new HashSet<>();
 
+    public Tag(String tagname) {
+    }
 }
