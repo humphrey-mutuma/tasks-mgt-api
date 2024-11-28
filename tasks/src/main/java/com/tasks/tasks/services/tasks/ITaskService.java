@@ -1,6 +1,7 @@
 package com.tasks.tasks.services.tasks;
 
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
+import com.tasks.tasks.dto.tasks.FindTaskResDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.model.Task;
 
@@ -11,7 +12,7 @@ public interface ITaskService {
 
     String  createTask(CreateTaskDto createTaskDto, String username);
 
-    List<Task> findTasks(int page, int pageSize, Long userId);
+    List<FindTaskResDto> findUserTasks(int page, int pageSize, Long userId);
 
     String updateTaskStatus(UpdateTaskStatusDto updateTaskStatusDto, Long taskId, Long userId  );
 

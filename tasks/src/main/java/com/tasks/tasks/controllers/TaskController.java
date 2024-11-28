@@ -3,6 +3,7 @@ package com.tasks.tasks.controllers;
 
 import com.tasks.tasks.auth.model.UserPrincipal;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
+import com.tasks.tasks.dto.tasks.FindTaskResDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.services.tasks.TaskService;
@@ -35,14 +36,14 @@ public class TaskController  {
 
 
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<Task>>> findTasks(
+    public ResponseEntity<ApiResponse<List<FindTaskResDto>>> findUserTasks(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>("Fetch tasks Successful",
-                        taskService.findTasks(page, pageSize ,userPrincipal.getId())));
+                        taskService.findUserTasks(page, pageSize ,userPrincipal.getId())));
     }
 
     @PatchMapping("/status/{taskId}")

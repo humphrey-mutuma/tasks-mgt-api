@@ -1,7 +1,8 @@
 package com.tasks.tasks.services.users;
 
-import com.tasks.tasks.dto.users.FindUserDto;
-import com.tasks.tasks.dto.users.UpdateUserDto;
+import com.tasks.tasks.dto.users.FindUsersDto;
+
+import java.util.List;
 
 public interface IUserService {
 
@@ -9,30 +10,14 @@ public interface IUserService {
      * Fetches the profile details of a single user by username.
      *
      * This method retrieves the profile details of a user based on their username. It returns
-     * a {@link FindUserDto} that represents the user's profile data.
+     * a {@link FindUsersDto} that represents the user's profile data.
      *
      * @param username the username of the user whose profile is to be fetched
-     * @return {@link FindUserDto} containing the user's profile information
+     * @return {@link FindUsersDto} containing the user's profile information
      * @throws UserNotFoundException if the user is not found
      */
-    FindUserDto findUser(String username);
+    List<FindUsersDto> findUsers();
 
-    /**
-     * Updates the details of a user.
-     *
-     * This method allows updating the profile of an existing user. It accepts a DTO containing
-     * the updated user information and applies the changes to the database.
-     *
-     * @param username the username of the user to update
-     * @param updateUserDto DTO containing the updated user data
-     * @return a success message indicating that the user's profile has been updated
-     * @throws UserNotFoundException if the user is not found
-     * @throws InvalidDataException if the provided data is invalid
-     */
-    String updateUser(
-            String username,
-            UpdateUserDto updateUserDto
-    );
 
     /**
      * Deletes a user from the system.

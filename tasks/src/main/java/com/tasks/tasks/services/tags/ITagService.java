@@ -11,8 +11,8 @@ public interface ITagService {
 
     Set<Tag> findOrCreateTags(List<String> tagnames);
 
-    List<FindTagsWithTasksCountResDto> findTagsWithTasksCount(int page, int pageSize );
+    List<FindTagsWithTasksCountResDto> findTagsWithTasksCount( );
 
-    List<FindTagWithTasksResDto> findTagWithTasks(Long tagId, int page, int pageSize);
+    List<FindTagWithTasksResDto> findTagWithTasks(Long tagId);
 
 }

@@ -2,6 +2,7 @@ package com.tasks.tasks.services.tasks;
 
 import com.tasks.tasks.auth.repo.AuthRepository;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
+import com.tasks.tasks.dto.tasks.FindTaskResDto;
 import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.exceptions.ResourceNotFoundException;
 import com.tasks.tasks.exceptions.UnauthorizedException;
@@ -22,7 +23,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TaskService implements ITaskService {
     private final AuthRepository authRepository;
-    private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final TagService tagService;
 
@@ -47,7 +47,7 @@ public class TaskService implements ITaskService {
         new_task.setDescription(createTaskDto.getDescription());
         new_task.setStatus(createTaskDto.getStatus());
         new_task.setTags(tags);
-        new_task.setOwner(task_owner);
+        new_task.setUser(task_owner);
 
         taskRepository.save(new_task);
 
@@ -56,9 +56,11 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public List<Task> findTasks(int page, int pageSize, Long userId) {
+    public List<FindTaskResDto> findUserTasks(int page, int pageSize, Long userId) {
+             int limit = pageSize;
+            int offset = (page - pageSize) * limit;
 
-        return List.of();
+            return taskRepository.findUserTasks( limit, offset, userId);
     }
 
     @Transactional
@@ -69,15 +71,20 @@ public class TaskService implements ITaskService {
                                .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
         //        verify ownership
         //        TODO: implement role based access instead
-        if (!Objects.equals(task_to_update.getOwner().getId(), userId)){
+        if (!Objects.equals(task_to_update.getUser().getId(), userId)){
             throw new UnauthorizedException("Not authorized");
         }
 
-        // Update the task status
-        task_to_update.setStatus(updateTaskStatusDto.getStatus());
-        taskRepository.save(task_to_update);
+        try {
+            // Update the task status
+            task_to_update.setStatus(updateTaskStatusDto.getStatus());
+            taskRepository.save(task_to_update);
 
-        return "Status updated successfully";
+            return "Status updated successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Transactional
@@ -88,27 +95,31 @@ public class TaskService implements ITaskService {
                                    .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
 
         // Verify task ownership
-         if (!Objects.equals(task_to_update.getOwner().getId(), userId)){
+         if (!Objects.equals(task_to_update.getUser().getId(), userId)){
             throw new UnauthorizedException("Not authorized");
         }
+        try {
+            // get tags if any and create them first
+            List<String> task_tags = updateTaskDto.getTags();
 
-        // get tags if any and create them first
-        List<String> task_tags = updateTaskDto.getTags();
-
-        // create task tags
-        Set<Tag> tags = task_tags.isEmpty() ?
-                new HashSet<>():
-                tagService.findOrCreateTags(task_tags);
+            // create task tags
+            Set<Tag> tags = task_tags.isEmpty() ?
+                    new HashSet<>():
+                    tagService.findOrCreateTags(task_tags);
 
 
-        //  update task
-        task_to_update.setTitle(updateTaskDto.getTitle());
-        task_to_update.setDescription(updateTaskDto.getDescription());
-        task_to_update.setStatus(updateTaskDto.getStatus());
-        task_to_update.setTags(tags);
+            //  update task
+            task_to_update.setTitle(updateTaskDto.getTitle());
+            task_to_update.setDescription(updateTaskDto.getDescription());
+            task_to_update.setStatus(updateTaskDto.getStatus());
+            task_to_update.setTags(tags);
 
-        taskRepository.save(task_to_update);
-        return "Task updated successfully";
+            taskRepository.save(task_to_update);
+            return "Task updated successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Transactional
@@ -117,12 +128,19 @@ public class TaskService implements ITaskService {
 //        check if the task exists
         Task task_to_delete = taskRepository.findById(taskId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
-//        Verify task ownership
+        //        Verify task ownership
 //        TODO: implement role based access instead
-        if (!Objects.equals(task_to_delete.getOwner().getId(), userId)){
+        if (!Objects.equals(task_to_delete.getUser().getId(), userId)){
             throw new UnauthorizedException("Not authorized");
         }
-        taskRepository.deleteById(taskId);
-        return "Task deleted successfully";
+
+        try {
+
+            taskRepository.deleteById(taskId);
+            return "Task deleted successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

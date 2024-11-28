@@ -55,13 +55,20 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public List<FindTagsWithTasksCountResDto> findTagsWithTasksCount(int page, int pageSize) {
-        return List.of();
+    public List<FindTagsWithTasksCountResDto> findTagsWithTasksCount() {
+
+            return tagRepository.findTagsWithTasksCount();
     }
 
     @Override
-    public List<FindTagWithTasksResDto> findTagWithTasks(Long tagId, int page, int pageSize) {
-        return List.of();
+    public List<FindTagWithTasksResDto> findTagWithTasks(Long tagId) {
+        try {
+
+            return tagRepository.findTagWithTasks(tagId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

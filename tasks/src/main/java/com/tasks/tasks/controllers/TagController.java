@@ -19,24 +19,21 @@ public class TagController {
 
     @GetMapping("/{tagId}")
     public ResponseEntity<ApiResponse<List<FindTagWithTasksResDto>>> findTagWithTasks(
-            @PathVariable("tagId") Long tagId,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+            @PathVariable("tagId") Long tagId
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>("Fetch tags with tasks Successful",
-                        tagService.findTagWithTasks(tagId, page, pageSize )));
+                        tagService.findTagWithTasks(tagId )));
     }
 
 
     @GetMapping()
     public ResponseEntity<ApiResponse<List<FindTagsWithTasksCountResDto>>> findTagsWithTasksCount(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>("Fetch tags with tasks count Successful",
-                        tagService.findTagsWithTasksCount( page, pageSize )));
+                        tagService.findTagsWithTasksCount(  )));
     }
 
 

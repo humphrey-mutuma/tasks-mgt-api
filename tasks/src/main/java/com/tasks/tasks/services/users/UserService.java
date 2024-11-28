@@ -1,29 +1,27 @@
 package com.tasks.tasks.services.users;
 
-import com.tasks.tasks.auth.repo.AuthRepository;
-import com.tasks.tasks.dto.users.FindUserDto;
-import com.tasks.tasks.dto.users.UpdateUserDto;
-import com.tasks.tasks.exceptions.ResourceNotFoundException;
-import com.tasks.tasks.model.User;
+ import com.tasks.tasks.dto.users.FindUsersDto;
+ import com.tasks.tasks.exceptions.ResourceNotFoundException;
+import com.tasks.tasks.exceptions.UnauthorizedException;
+ import com.tasks.tasks.model.User;
 import com.tasks.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService{
-    private final AuthRepository authRepository;
-    private final UserRepository userRepository;
+     private final UserRepository userRepository;
+
     @Override
-    public FindUserDto findUser(String username) {
+    public List<FindUsersDto> findUsers() {
 
         try {
-            User user = authRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("user not found!"));
-
-            // Map User to FindUserDto
-            return new FindUserDto(user.getId(), user.getUsername());
+            return userRepository.findAllUsers();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -32,14 +30,22 @@ public class UserService implements IUserService{
 
     @Transactional
     @Override
-    public String updateUser(String username, UpdateUserDto updateUserDto) {
-
-        return "";
-    }
-
-    @Transactional
-    @Override
     public String deleteUser(Long userId) {
-        return "";
+        //        check if the user exists
+        User user_to_delete = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+        //        Verify ownership
+        //        TODO: implement role based access instead
+        if (!Objects.equals(user_to_delete.getId(), userId)){
+            throw new UnauthorizedException("Not authorized");
+        }
+
+        try {
+
+            userRepository.deleteById(userId);
+            return "Deleted user successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
