@@ -67,17 +67,19 @@ public class TaskService implements ITaskService {
 //fetch all tasks
         List<FindTaskResDto> tasks = taskRepository.findUserTasks( limit, offset, userId);
 
-        // If a tagName is provided, filter the tasks by tagName
+
+        // filter tasks by tagName
         if (tagName != null && !tagName.isEmpty()) {
             tasks = tasks.stream()
                     .filter(task -> {
-                        // Split the tags string into a list of tag names and check if the task contains the tagName
-                        String tags = task.getTags();  // Assuming tags is a comma-separated string, e.g., "tag1, tag2"
-                        List<String> tagList = Arrays.asList(tags.split(",\\s*"));  // Split by comma and trim any spaces
-                        return tagList.contains(tagName);  // Check if the tag list contains the tagName
+                        // Assuming task.getTags() returns a stringified list of tags, e.g., "[tag1, tag2, tag3]"
+                        List<String> tags = task.getTags();  // tags is a string like "[tag1, tag2, tag3]"
+//                        List<String> tagList = Arrays.asList(tags.replaceAll("[\\[\\] ]", "").split(","));
+                        return tags.contains(tagName);  // Check if tagName is in the list of tags
                     })
-                    .toList();
+                    .collect(Collectors.toList());
         }
+
         // Apply filters: filter by status  if provided
         return tasks.stream()
                 .filter(task -> status == null || task.getStatus().equals(status)) // Filter by status
@@ -86,7 +88,7 @@ public class TaskService implements ITaskService {
 
     @Transactional
     @Override
-    public String updateTaskStatus(UpdateTaskStatusDto updateTaskStatusDto, Long taskId, Long userId) {
+    public String updateTaskStatus(TaskStatus status, Long taskId, Long userId) {
         //        check if the task exists
         Task task_to_update = taskRepository.findById(taskId)
                                .orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
@@ -98,7 +100,7 @@ public class TaskService implements ITaskService {
 
         try {
             // Update the task status
-            task_to_update.setStatus(updateTaskStatusDto.getStatus());
+            task_to_update.setStatus(status);
             taskRepository.save(task_to_update);
 
             return "Status updated successfully";

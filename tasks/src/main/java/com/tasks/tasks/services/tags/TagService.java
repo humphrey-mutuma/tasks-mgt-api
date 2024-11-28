@@ -2,7 +2,8 @@ package com.tasks.tasks.services.tags;
 
  import com.tasks.tasks.dto.tags.FindTagsWithTasksCountResDto;
 import com.tasks.tasks.dto.tags.FindTagWithTasksResDto;
-import com.tasks.tasks.model.Tag;
+ import com.tasks.tasks.exceptions.ResourceNotFoundException;
+ import com.tasks.tasks.model.Tag;
 import com.tasks.tasks.repository.TagRepository;
   import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,9 @@ public class TagService implements ITagService {
 
     @Override
     public List<FindTagWithTasksResDto> findTagWithTasks(Long tagId) {
+//        check if the tag exists
+        tagRepository.findById(tagId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Tag not found!"));
         try {
 
             return tagRepository.findTagWithTasks(tagId);

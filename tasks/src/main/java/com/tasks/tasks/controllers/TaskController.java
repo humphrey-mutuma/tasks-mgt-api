@@ -9,6 +9,7 @@ import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.services.tasks.TaskService;
 import com.tasks.tasks.shared.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,13 @@ import java.util.List;
 public class TaskController  {
     private final TaskService taskService;
 
-
+    /**
+     * create a task with optional tags (if tags already exist, they are linked else created and linked
+     * @param userDetails in session user
+     * @param createTaskDto dto to create a user
+     * @return success or fail message
+     */
+    @Operation(summary = "create a task with optional tags (if tags already exist, they are linked else created and linked)", description = "")
     @PostMapping()
     public ResponseEntity<ApiResponse<String>> createTask(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -36,7 +43,16 @@ public class TaskController  {
                         null));
     }
 
-
+    /**
+     * fetch the logged in user tasks with optional status and tags filters
+     * @param userPrincipal in session user details
+     * @param status optional status filter
+     * @param tagName optional tagname filater
+     * @param page the page to fetch
+     * @param pageSize the number of items in this page
+     * @return list of tasks by a user
+     */
+    @Operation(summary = "fetch the logged in user tasks with optional status and tags filters", description = "")
     @GetMapping()
     public ResponseEntity<ApiResponse<List<FindTaskResDto>>> findUserTasks(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -55,17 +71,33 @@ public class TaskController  {
 
     }
 
+    /**
+     * Update task status
+     * @param userPrincipal in session user details
+     * @param status optional status filter
+      * @param taskId is of the task to update
+     * @return
+     */
+    @Operation(summary = "Update task status", description = "")
     @PatchMapping("/status/{taskId}")
     public ResponseEntity<ApiResponse<List<Task>>> updateTaskStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @RequestBody() UpdateTaskStatusDto updateTaskStatusDto,
+            @RequestParam(required = false) TaskStatus status,
             @PathVariable Long taskId
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>(
-                        taskService.updateTaskStatus(updateTaskStatusDto,taskId ,userPrincipal.getId()), null));
+                        taskService.updateTaskStatus(status, taskId ,userPrincipal.getId()), null));
     }
 
+    /**
+     * Update a tasks title, desc, status, and tags
+     * @param userPrincipal
+     * @param updateTaskDto
+     * @param taskId
+     * @return
+     */
+    @Operation(summary = "Update a tasks title, desc, status, and tags ", description = "")
     @PatchMapping("/{taskId}")
     public ResponseEntity<ApiResponse<String>> updateTask(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -77,6 +109,14 @@ public class TaskController  {
                         taskService.updateTask(updateTaskDto, taskId ,userPrincipal.getId()), null));
     }
 
+    /**
+     * Delete a task by its id
+     * @param userPrincipal is session user details
+     * @param taskId to delete task id
+     * @return success or fail message
+     */
+
+    @Operation(summary = "Delete a task by id ", description = "")
     @DeleteMapping("/{taskId}")
     public ResponseEntity<ApiResponse<String>> deleteTask(
             @AuthenticationPrincipal UserPrincipal userPrincipal,

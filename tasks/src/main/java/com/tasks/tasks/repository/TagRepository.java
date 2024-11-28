@@ -23,20 +23,18 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findAllByTagnameIn(List<String> tagnames);
 
     @Query(value = """
-            SELECT
-                     t.id,
-                     t.tagname,
-                     COUNT(task.id) AS tasksCount
-                 FROM
-                     tags tg
-                 LEFT JOIN
-                     task_tags tt  ON tt.tag_id = tg.id
-                 LEFT JOIN
-                     tasks task  ON task.id = tt.task_id
-                 GROUP BY
-                     tg.id
-                 LIMIT: limit
-                 OFFSET: offset;
+                         SELECT
+                                 tg.id,
+                                 tg.tagname,
+                                 COUNT(task.id) AS tasksCount
+                             FROM
+                                 tags tg
+                             LEFT JOIN
+                                 task_tags tt  ON tt.tag_id = tg.id
+                             LEFT JOIN
+                                 tasks task  ON task.id = tt.task_id
+                             GROUP BY
+                                 tg.id;
             """,
     nativeQuery = true)
     List<FindTagsWithTasksCountResDto> findTagsWithTasksCount();

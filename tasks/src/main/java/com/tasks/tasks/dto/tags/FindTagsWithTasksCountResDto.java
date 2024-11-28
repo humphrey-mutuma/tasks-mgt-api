@@ -7,5 +7,5 @@ package com.tasks.tasks.dto.tags;
 public interface FindTagsWithTasksCountResDto {
     String getId();
     String getTagname();
-    String getTasksCount();
+    Integer getTasksCount();
   }
