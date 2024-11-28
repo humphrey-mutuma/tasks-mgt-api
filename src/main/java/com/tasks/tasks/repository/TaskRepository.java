@@ -41,15 +41,11 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
           GROUP BY
              t.id
          ORDER BY
-             t.id
-         LIMIT :limit
-         OFFSET :offset ;
+             t.id ;
            """,
          nativeQuery = true
  )
  List<FindTaskResDto> findUserTasks(
-          @Param("limit") int limit,
-         @Param("offset") int offset,
          @Param("userId") Long userId
  );
 }

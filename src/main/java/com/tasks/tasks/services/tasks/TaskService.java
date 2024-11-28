@@ -13,6 +13,7 @@ import com.tasks.tasks.model.Tag;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.model.User;
 import com.tasks.tasks.repository.TaskRepository;
+import com.tasks.tasks.services.auditLogs.AuditService;
 import com.tasks.tasks.services.tags.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,7 @@ public class TaskService implements ITaskService {
     private final AuthRepository authRepository;
     private final TaskRepository taskRepository;
     private final TagService tagService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final AuditService auditService;
 
     @Transactional
     @Override
@@ -63,12 +63,10 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public List<FindTaskResDto> findUserTasks(TaskStatus status, LocalDate createdAt, String tagName, int page, int pageSize, Long userId) {
-             int limit = pageSize;
-            int offset = (page - 1) * limit;
+    public List<FindTaskResDto> findUserTasks(TaskStatus status, LocalDate createdAt, String tagName,  Long userId) {
 
         //fetch all tasks
-        List<FindTaskResDto> tasks = taskRepository.findUserTasks( limit, offset, userId);
+        List<FindTaskResDto> tasks = taskRepository.findUserTasks(userId);
 
         // filter tasks by tagName
         if (tagName != null && !tagName.isEmpty()) {
@@ -109,6 +107,9 @@ public class TaskService implements ITaskService {
         }
 
         try {
+            // Log the change before updating status
+            auditService.logChange("Task", taskId, "UPDATED", "updated task status with title: " + task_to_update.getTitle());
+
             // Update the task status
             task_to_update.setStatus(status);
             taskRepository.save(task_to_update);
@@ -132,6 +133,9 @@ public class TaskService implements ITaskService {
             throw new UnauthorizedException("Not authorized");
         }
         try {
+            // Log the change before updating task
+            auditService.logChange("Task", taskId, "UPDATED", "updated task with title: " + task_to_update.getTitle());
+
             // get tags if any and create them first
             List<String> task_tags = updateTaskDto.getTags();
 
@@ -168,6 +172,8 @@ public class TaskService implements ITaskService {
         }
 
         try {
+            // Log the change before deleting
+            auditService.logChange("Task", taskId, "DELETED", "Deleted task with title: " + task_to_delete.getTitle());
 
             taskRepository.deleteById(taskId);
             return "Task deleted successfully";

@@ -15,7 +15,7 @@ public interface ITaskService {
 
     String  createTask(CreateTaskDto createTaskDto, String username);
 
-    List<FindTaskResDto> findUserTasks(TaskStatus status, LocalDate createdAt,  String tagNames, int page, int pageSize, Long userId);
+    List<FindTaskResDto> findUserTasks(TaskStatus status, LocalDate createdAt,  String tagNames, Long userId);
 
     String updateTaskStatus(TaskStatus status, Long taskId, Long userId  );
 

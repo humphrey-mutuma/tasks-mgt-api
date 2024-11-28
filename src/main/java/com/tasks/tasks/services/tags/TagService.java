@@ -7,6 +7,7 @@ import com.tasks.tasks.dto.tags.FindTagWithTasksResDto;
  import com.tasks.tasks.model.Task;
  import com.tasks.tasks.repository.TagRepository;
  import com.tasks.tasks.repository.TaskRepository;
+ import com.tasks.tasks.services.auditLogs.AuditService;
  import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 public class TagService implements ITagService {
     private final TagRepository tagRepository;
     private final TaskRepository taskRepository;
+    private final AuditService auditService;
+
 
     @Transactional
     @Override
@@ -87,9 +90,16 @@ public class TagService implements ITagService {
             task.getTags().remove(tag);
             taskRepository.save(task); // Update the task
         }
+        try {
+            // Log the change before deleting
+            auditService.logChange("Tag", tagId, "DELETED", "Deleted tag with tagname: " + tag.getTagname());
 
-        tagRepository.deleteById(tagId);
-        return "Tag deleted successfully";
+            tagRepository.deleteById(tagId);
+            return "Tag deleted successfully";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

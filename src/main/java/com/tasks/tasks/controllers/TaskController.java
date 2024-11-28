@@ -50,8 +50,6 @@ public class TaskController  {
      * @param userPrincipal in session user details
      * @param status optional status filter
      * @param tagName optional tagname filater
-     * @param page the page to fetch
-     * @param pageSize the number of items in this page
      * @return list of tasks by a user
      */
     @Operation(summary = "fetch the logged in user tasks with optional status and tags filters", description = "")
@@ -60,11 +58,10 @@ public class TaskController  {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(required = false) TaskStatus status, // status filter
             @RequestParam(required = false) String tagName, // tags filter
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAt, // Date filter
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAt // Date filter
+
     ) {
-       List<FindTaskResDto> tasks = taskService.findUserTasks( status, createdAt, tagName, page, pageSize ,userPrincipal.getId());
+       List<FindTaskResDto> tasks = taskService.findUserTasks( status, createdAt, tagName ,userPrincipal.getId());
         if (tasks.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -83,7 +80,7 @@ public class TaskController  {
      */
     @Operation(summary = "Update task status", description = "")
     @PatchMapping("/status/{taskId}")
-    public ResponseEntity<ApiResponse<List<Task>>> updateTaskStatus(
+    public ResponseEntity<ApiResponse<List<String>>> updateTaskStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(required = false) TaskStatus status,
             @PathVariable Long taskId

@@ -57,7 +57,8 @@ public class TagController {
     ) {
         return ResponseEntity
                 .ok(new ApiResponse<>(
-                        tagService.deleteTag(tagId) , null));
+                tagService.deleteTag(tagId) , null)
+                );
     }
 
 }
