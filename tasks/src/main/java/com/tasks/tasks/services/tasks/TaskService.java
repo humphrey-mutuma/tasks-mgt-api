@@ -1,5 +1,8 @@
 package com.tasks.tasks.services.tasks;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tasks.tasks.Enums.TaskStatus;
 import com.tasks.tasks.auth.repo.AuthRepository;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
 import com.tasks.tasks.dto.tasks.FindTaskResDto;
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -56,11 +61,27 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public List<FindTaskResDto> findUserTasks(int page, int pageSize, Long userId) {
+    public List<FindTaskResDto> findUserTasks( TaskStatus status, String tagName, int page, int pageSize, Long userId) {
              int limit = pageSize;
-            int offset = (page - pageSize) * limit;
+            int offset = (page - 1) * limit;
+//fetch all tasks
+        List<FindTaskResDto> tasks = taskRepository.findUserTasks( limit, offset, userId);
 
-            return taskRepository.findUserTasks( limit, offset, userId);
+        // If a tagName is provided, filter the tasks by tagName
+        if (tagName != null && !tagName.isEmpty()) {
+            tasks = tasks.stream()
+                    .filter(task -> {
+                        // Split the tags string into a list of tag names and check if the task contains the tagName
+                        String tags = task.getTags();  // Assuming tags is a comma-separated string, e.g., "tag1, tag2"
+                        List<String> tagList = Arrays.asList(tags.split(",\\s*"));  // Split by comma and trim any spaces
+                        return tagList.contains(tagName);  // Check if the tag list contains the tagName
+                    })
+                    .toList();
+        }
+        // Apply filters: filter by status  if provided
+        return tasks.stream()
+                .filter(task -> status == null || task.getStatus().equals(status)) // Filter by status
+                 .collect(Collectors.toList());
     }
 
     @Transactional
@@ -143,4 +164,5 @@ public class TaskService implements ITaskService {
         }
 
     }
+
 }

@@ -1,6 +1,7 @@
 package com.tasks.tasks.controllers;
 
 
+import com.tasks.tasks.Enums.TaskStatus;
 import com.tasks.tasks.auth.model.UserPrincipal;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
 import com.tasks.tasks.dto.tasks.FindTaskResDto;
@@ -9,6 +10,7 @@ import com.tasks.tasks.model.Task;
 import com.tasks.tasks.services.tasks.TaskService;
 import com.tasks.tasks.shared.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,12 +40,19 @@ public class TaskController  {
     @GetMapping()
     public ResponseEntity<ApiResponse<List<FindTaskResDto>>> findUserTasks(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestParam(required = false) TaskStatus status,
+            @RequestParam(required = false) String tagName,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
-        return ResponseEntity
-                .ok(new ApiResponse<>("Fetch tasks Successful",
-                        taskService.findUserTasks(page, pageSize ,userPrincipal.getId())));
+       List<FindTaskResDto> tasks = taskService.findUserTasks( status, tagName, page, pageSize ,userPrincipal.getId());
+        if (tasks.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("No tasks found", null));
+        }
+        return ResponseEntity.ok(new ApiResponse<>(tasks.size() + " Tasks found", tasks));
+
     }
 
     @PatchMapping("/status/{taskId}")
