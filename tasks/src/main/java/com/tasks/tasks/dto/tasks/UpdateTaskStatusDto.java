@@ -1,5 +1,6 @@
 package com.tasks.tasks.dto.tasks;
 
+import com.tasks.tasks.Enums.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -11,5 +12,5 @@ import java.util.List;
 @Data
 public class UpdateTaskStatusDto {
     @NotBlank
-    private Boolean isCompleted ;
+    private TaskStatus status ;
 }

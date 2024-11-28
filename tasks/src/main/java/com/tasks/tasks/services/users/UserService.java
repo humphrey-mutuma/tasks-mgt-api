@@ -8,6 +8,7 @@ import com.tasks.tasks.model.User;
 import com.tasks.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +30,14 @@ public class UserService implements IUserService{
         }
      }
 
+    @Transactional
     @Override
     public String updateUser(String username, UpdateUserDto updateUserDto) {
 
         return "";
     }
 
+    @Transactional
     @Override
     public String deleteUser(Long userId) {
         return "";

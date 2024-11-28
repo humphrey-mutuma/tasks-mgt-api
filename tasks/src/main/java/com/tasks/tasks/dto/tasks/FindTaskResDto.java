@@ -8,6 +8,6 @@ public interface FindTaskResDto {
     String getId();
     String getTitle();
     String getDescription();
-    Boolean getIsCompleted();
+    Boolean getStatus();
     String getTags(); //  returned as string, will be parsed to json on the client side
 }

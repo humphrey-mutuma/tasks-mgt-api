@@ -1,5 +1,6 @@
 package com.tasks.tasks.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,8 +30,10 @@ public class Tag {
     private String tagname;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnore // Prevents infinite recursion
     private Set<Task> tasks = new HashSet<>();
 
     public Tag(String tagname) {
+        this.tagname = tagname;
     }
 }

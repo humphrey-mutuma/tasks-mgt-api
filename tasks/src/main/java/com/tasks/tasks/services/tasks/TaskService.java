@@ -14,6 +14,7 @@ import com.tasks.tasks.services.tags.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
     private final TagService tagService;
 
+    @Transactional
     @Override
     public String createTask(CreateTaskDto createTaskDto, String username) {
         //        fetch task owner
@@ -43,9 +45,11 @@ public class TaskService implements ITaskService {
         Task new_task = new Task();
         new_task.setTitle(createTaskDto.getTitle());
         new_task.setDescription(createTaskDto.getDescription());
-        new_task.setIsCompleted(createTaskDto.getIsCompleted());
+        new_task.setStatus(createTaskDto.getStatus());
         new_task.setTags(tags);
         new_task.setOwner(task_owner);
+
+        taskRepository.save(new_task);
 
         return "Task created successfully";
     }
@@ -53,9 +57,11 @@ public class TaskService implements ITaskService {
 
     @Override
     public List<Task> findTasks(int page, int pageSize, Long userId) {
+
         return List.of();
     }
 
+    @Transactional
     @Override
     public String updateTaskStatus(UpdateTaskStatusDto updateTaskStatusDto, Long taskId, Long userId) {
         //        check if the task exists
@@ -68,12 +74,13 @@ public class TaskService implements ITaskService {
         }
 
         // Update the task status
-        task_to_update.setIsCompleted(updateTaskStatusDto.getIsCompleted());
+        task_to_update.setStatus(updateTaskStatusDto.getStatus());
         taskRepository.save(task_to_update);
 
         return "Status updated successfully";
     }
 
+    @Transactional
     @Override
     public String updateTask(CreateTaskDto  updateTaskDto, Long taskId, Long userId) {
         // check if the task exists
@@ -97,13 +104,14 @@ public class TaskService implements ITaskService {
         //  update task
         task_to_update.setTitle(updateTaskDto.getTitle());
         task_to_update.setDescription(updateTaskDto.getDescription());
-        task_to_update.setIsCompleted(updateTaskDto.getIsCompleted());
+        task_to_update.setStatus(updateTaskDto.getStatus());
         task_to_update.setTags(tags);
 
         taskRepository.save(task_to_update);
         return "Task updated successfully";
     }
 
+    @Transactional
     @Override
     public String deleteTask(Long taskId, Long userId) {
 //        check if the task exists

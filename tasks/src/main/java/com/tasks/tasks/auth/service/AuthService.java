@@ -73,7 +73,8 @@ public class AuthService implements IAuthService{
      * @param loginDto the login credentials of the user
      * @return LoginResDto containing authentication details such as token
      */
-   public LoginResDto login(LoginDto loginDto) {
+    @Transactional
+    public LoginResDto login(LoginDto loginDto) {
 
         User existing_user = authRepository.findByUsername(loginDto.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("user not found, please register"));

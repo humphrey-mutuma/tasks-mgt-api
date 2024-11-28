@@ -1,5 +1,6 @@
 package com.tasks.tasks.model;
 
+import com.tasks.tasks.Enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,11 +34,13 @@ public class Task {
 
     private String description;
 
-    private Boolean isCompleted = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskStatus status = TaskStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User  owner;
+    private User  user;
 
     @ManyToMany
     @JoinTable(
