@@ -25,6 +25,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
              t.title,
              t.description,
              t.status,
+             t.created_at,
+             t.updated_at,
              ARRAY_AGG(tg.tagname) AS tags
          FROM
              tasks t
@@ -36,7 +38,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
              ON tg.id = tt.tag_id
          WHERE
              t.user_id = :userId
-         GROUP BY
+          GROUP BY
              t.id
          ORDER BY
              t.id
@@ -46,8 +48,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
          nativeQuery = true
  )
  List<FindTaskResDto> findUserTasks(
-//         @Param("tags") String tags,
-         @Param("limit") int limit,
+          @Param("limit") int limit,
          @Param("offset") int offset,
          @Param("userId") Long userId
  );

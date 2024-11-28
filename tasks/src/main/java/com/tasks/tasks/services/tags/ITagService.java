@@ -15,4 +15,6 @@ public interface ITagService {
 
     List<FindTagWithTasksResDto> findTagWithTasks(Long tagId);
 
+    String deleteTag(Long tagId);
+
 }

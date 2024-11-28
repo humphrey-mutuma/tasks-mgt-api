@@ -1,28 +1,28 @@
 package com.tasks.tasks.services.tasks;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tasks.tasks.Enums.TaskStatus;
 import com.tasks.tasks.auth.repo.AuthRepository;
 import com.tasks.tasks.dto.tasks.CreateTaskDto;
 import com.tasks.tasks.dto.tasks.FindTaskResDto;
-import com.tasks.tasks.dto.tasks.UpdateTaskStatusDto;
 import com.tasks.tasks.exceptions.ResourceNotFoundException;
 import com.tasks.tasks.exceptions.UnauthorizedException;
 import com.tasks.tasks.model.Tag;
 import com.tasks.tasks.model.Task;
 import com.tasks.tasks.model.User;
 import com.tasks.tasks.repository.TaskRepository;
-import com.tasks.tasks.repository.UserRepository;
 import com.tasks.tasks.services.tags.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,8 @@ public class TaskService implements ITaskService {
     private final AuthRepository authRepository;
     private final TaskRepository taskRepository;
     private final TagService tagService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Transactional
     @Override
@@ -61,29 +63,37 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public List<FindTaskResDto> findUserTasks( TaskStatus status, String tagName, int page, int pageSize, Long userId) {
+    public List<FindTaskResDto> findUserTasks(TaskStatus status, LocalDate createdAt, String tagName, int page, int pageSize, Long userId) {
              int limit = pageSize;
             int offset = (page - 1) * limit;
-//fetch all tasks
-        List<FindTaskResDto> tasks = taskRepository.findUserTasks( limit, offset, userId);
 
+        //fetch all tasks
+        List<FindTaskResDto> tasks = taskRepository.findUserTasks( limit, offset, userId);
 
         // filter tasks by tagName
         if (tagName != null && !tagName.isEmpty()) {
             tasks = tasks.stream()
                     .filter(task -> {
-                        // Assuming task.getTags() returns a stringified list of tags, e.g., "[tag1, tag2, tag3]"
-                        List<String> tags = task.getTags();  // tags is a string like "[tag1, tag2, tag3]"
-//                        List<String> tagList = Arrays.asList(tags.replaceAll("[\\[\\] ]", "").split(","));
-                        return tags.contains(tagName);  // Check if tagName is in the list of tags
+                         List<String> tags = task.getTags();  // tags is a string like "[tag1, tag2, tag3]"
+                         return tags.contains(tagName);  // Check if tagName is in the list of tags
                     })
                     .collect(Collectors.toList());
         }
+        // Filter tasks by status if provided
+        if (status != null) {
+            tasks = tasks.stream()
+                    .filter(task -> task.getStatus().equals(status))
+                    .collect(Collectors.toList());
+        }
 
-        // Apply filters: filter by status  if provided
-        return tasks.stream()
-                .filter(task -> status == null || task.getStatus().equals(status)) // Filter by status
-                 .collect(Collectors.toList());
+         // Filter tasks by createdAt (if provided)
+        if (createdAt != null) {
+            tasks = tasks.stream()
+                    .filter(task -> task.getCreatedAt().toLocalDate().equals(createdAt))
+                    .collect(Collectors.toList());
+        }
+
+        return tasks;
     }
 
     @Transactional

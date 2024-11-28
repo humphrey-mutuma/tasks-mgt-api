@@ -29,7 +29,7 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String tagname;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags",  cascade = CascadeType.PERSIST)
     @JsonIgnore // Prevents infinite recursion
     private Set<Task> tasks = new HashSet<>();
 

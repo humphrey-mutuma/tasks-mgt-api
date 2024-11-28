@@ -4,8 +4,10 @@ package com.tasks.tasks.services.tags;
 import com.tasks.tasks.dto.tags.FindTagWithTasksResDto;
  import com.tasks.tasks.exceptions.ResourceNotFoundException;
  import com.tasks.tasks.model.Tag;
-import com.tasks.tasks.repository.TagRepository;
-  import lombok.RequiredArgsConstructor;
+ import com.tasks.tasks.model.Task;
+ import com.tasks.tasks.repository.TagRepository;
+ import com.tasks.tasks.repository.TaskRepository;
+ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TagService implements ITagService {
     private final TagRepository tagRepository;
+    private final TaskRepository taskRepository;
 
     @Transactional
     @Override
@@ -73,6 +76,20 @@ public class TagService implements ITagService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public String deleteTag(Long tagId) {
+//    check if the ta exists
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag not found"));
+        // Detach the tag from tasks
+        for (Task task : tag.getTasks()) {
+            task.getTags().remove(tag);
+            taskRepository.save(task); // Update the task
+        }
+
+        tagRepository.deleteById(tagId);
+        return "Tag deleted successfully";
     }
 
 }

@@ -11,12 +11,14 @@ import com.tasks.tasks.services.tasks.TaskService;
 import com.tasks.tasks.shared.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -56,12 +58,13 @@ public class TaskController  {
     @GetMapping()
     public ResponseEntity<ApiResponse<List<FindTaskResDto>>> findUserTasks(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @RequestParam(required = false) TaskStatus status,
-            @RequestParam(required = false) String tagName,
+            @RequestParam(required = false) TaskStatus status, // status filter
+            @RequestParam(required = false) String tagName, // tags filter
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAt, // Date filter
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
-       List<FindTaskResDto> tasks = taskService.findUserTasks( status, tagName, page, pageSize ,userPrincipal.getId());
+       List<FindTaskResDto> tasks = taskService.findUserTasks( status, createdAt, tagName, page, pageSize ,userPrincipal.getId());
         if (tasks.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

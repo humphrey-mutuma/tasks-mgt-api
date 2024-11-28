@@ -46,8 +46,18 @@ public class TagController {
                         tagService.findTagsWithTasksCount(  )));
     }
 
-
-
-
+    /**
+     * delete a tag
+     * @return message
+     */
+    @Operation(summary = "delete a tag by tag id", description = "")
+    @DeleteMapping("/{tagId}")
+    public ResponseEntity<ApiResponse<String>> deleteTag(
+            @PathVariable("tagId") Long tagId
+    ) {
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        tagService.deleteTag(tagId) , null));
+    }
 
 }
