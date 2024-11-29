@@ -32,9 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-# Optionally, you can also ignore specific profiles like:
-src/main/resources/application-dev.properties
-/src/main/resources/application-dev.properties
-tasks/src/main/resources/application-dev.properties
-/tasks/src/main/resources/application-dev.properties
-#application-prod.properties
+## ignore dev profiles
+#src/main/resources/application-dev.properties
+#/src/main/resources/application-dev.properties
+#tasks/src/main/resources/application-dev.properties
+#/tasks/src/main/resources/application-dev.properties
+##application-prod.properties
