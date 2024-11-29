@@ -42,7 +42,7 @@ java -jar target/tasks-0.0.1-SNAPSHOT.jar
 Once the application starts, access it at:
 
 
-- http://localhost:8080/swagger-ui.html
+- http://localhost:8080/swagger-ui/index.html
 
 ## 
  
