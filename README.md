@@ -43,6 +43,9 @@ Once the application starts, access it at:
 
 
 - http://localhost:8080/swagger-ui/index.html
-
+- register new user **/auth/register**
+- login to get access token in the response body **/auth/login**
+- authorize with the valid access token
+- process to access the rest of the endpoints
 ## 
  
